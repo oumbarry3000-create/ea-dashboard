@@ -18,9 +18,7 @@
     --muted: #5a6472;
     --card: #13181e;
   }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
   body {
     background: var(--bg);
     color: var(--text);
@@ -28,25 +26,45 @@
     min-height: 100vh;
     overflow-x: hidden;
   }
-
-  /* Grain overlay */
   body::before {
     content: '';
     position: fixed; inset: 0;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
     pointer-events: none; z-index: 0;
   }
-
   .app { position: relative; z-index: 1; }
+
+  /* LOADER */
+  #fb-loader {
+    position: fixed; inset: 0; background: var(--bg);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    z-index: 999; gap: 16px;
+  }
+  .loader-dot {
+    width: 12px; height: 12px; border-radius: 50%; background: var(--accent);
+    animation: loaderPulse 1.2s ease-in-out infinite;
+    box-shadow: 0 0 16px var(--accent);
+  }
+  .loader-text { font-family: 'Space Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.15em; }
+  @keyframes loaderPulse {
+    0%,100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.5); opacity: 0.4; }
+  }
+
+  /* LIVE INDICATOR */
+  .live-dot {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--accent);
+    animation: liveBlink 1.5s ease-in-out infinite;
+    display: inline-block; margin-right: 4px;
+  }
+  @keyframes liveBlink { 0%,100%{opacity:1} 50%{opacity:0.2} }
 
   /* HEADER */
   header {
     padding: 16px 16px 0;
     display: flex; align-items: center; justify-content: space-between;
   }
-  .logo {
-    display: flex; align-items: center; gap: 8px;
-  }
+  .logo { display: flex; align-items: center; gap: 8px; }
   .logo-dot {
     width: 8px; height: 8px; border-radius: 50%;
     background: var(--accent);
@@ -59,7 +77,6 @@
   }
   .logo-text { font-size: 13px; font-weight: 800; letter-spacing: 0.12em; color: var(--text); text-transform: uppercase; }
   .logo-sub { font-family: 'Space Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; }
-
   .header-right { text-align: right; }
   .username { font-size: 12px; color: var(--muted); font-family: 'Space Mono', monospace; }
   .status-badge {
@@ -70,7 +87,7 @@
   .status-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
   .status-text { font-size: 9px; font-weight: 600; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase; }
 
-  /* EQUITY HERO */
+  /* EQUITY */
   .equity-section {
     padding: 20px 16px 16px;
     animation: fadeUp 0.5s ease forwards;
@@ -94,11 +111,8 @@
   .equity-change.negative .pct { color: var(--accent2); }
   .equity-change .period { font-size: 10px; color: var(--muted); margin-left: 2px; }
 
-  /* MINI CHART */
-  .chart-wrap {
-    padding: 0 16px 16px;
-    animation: fadeUp 0.5s 0.1s ease both;
-  }
+  /* CHART */
+  .chart-wrap { padding: 0 16px 16px; animation: fadeUp 0.5s 0.1s ease both; }
   canvas#sparkline { width: 100%; height: 60px; display: block; }
 
   /* STATS GRID */
@@ -108,11 +122,12 @@
     animation: fadeUp 0.5s 0.2s ease both;
   }
   .stat-card {
-    background: var(--card);
-    border: 1px solid var(--border);
+    background: var(--card); border: 1px solid var(--border);
     border-radius: 12px; padding: 14px;
     position: relative; overflow: hidden;
+    transition: transform 0.2s;
   }
+  .stat-card:active { transform: scale(0.97); }
   .stat-card::before {
     content: ''; position: absolute;
     top: 0; left: 0; right: 0; height: 2px;
@@ -121,7 +136,6 @@
   .stat-card.red::before { background: linear-gradient(90deg, var(--accent2), transparent); }
   .stat-card.yellow::before { background: linear-gradient(90deg, var(--accent3), transparent); }
   .stat-card.blue::before { background: linear-gradient(90deg, #4d9fff, transparent); }
-
   .stat-icon { font-size: 18px; margin-bottom: 8px; }
   .stat-val { font-size: 22px; font-weight: 800; line-height: 1; }
   .stat-val.green { color: var(--accent); }
@@ -137,9 +151,7 @@
     padding: 0 16px 10px;
     display: flex; align-items: center; gap: 8px;
   }
-  .section-title::after {
-    content: ''; flex: 1; height: 1px; background: var(--border);
-  }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
   /* SIGNALS */
   .signals-list {
@@ -148,13 +160,11 @@
     animation: fadeUp 0.5s 0.3s ease both;
   }
   .signal-card {
-    background: var(--card);
-    border: 1px solid var(--border);
+    background: var(--card); border: 1px solid var(--border);
     border-radius: 12px; padding: 12px 14px;
     display: flex; align-items: center; gap: 12px;
     position: relative; overflow: hidden;
     transition: transform 0.15s ease;
-    cursor: pointer;
   }
   .signal-card:active { transform: scale(0.98); }
   .signal-card::after {
@@ -165,7 +175,6 @@
   .signal-card.buy::after { background: var(--accent); }
   .signal-card.sell::after { background: var(--accent2); }
   .signal-card.pending::after { background: var(--accent3); }
-
   .signal-dir {
     width: 36px; height: 36px; border-radius: 10px;
     display: flex; align-items: center; justify-content: center;
@@ -174,11 +183,9 @@
   .signal-dir.buy { background: rgba(0,229,160,0.12); color: var(--accent); }
   .signal-dir.sell { background: rgba(255,77,109,0.12); color: var(--accent2); }
   .signal-dir.pending { background: rgba(255,201,60,0.12); color: var(--accent3); }
-
   .signal-info { flex: 1; min-width: 0; }
   .signal-pair { font-size: 14px; font-weight: 700; }
   .signal-meta { font-family: 'Space Mono', monospace; font-size: 9px; color: var(--muted); margin-top: 2px; }
-
   .signal-right { text-align: right; }
   .signal-pnl { font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; }
   .signal-pnl.pos { color: var(--accent); }
@@ -192,10 +199,7 @@
     animation: fadeUp 0.5s 0.4s ease both;
     margin-bottom: 24px;
   }
-  .ea-card {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 12px; padding: 14px;
-  }
+  .ea-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
   .ea-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
   .ea-name { font-size: 13px; font-weight: 700; }
   .ea-status {
@@ -204,7 +208,6 @@
   }
   .ea-status.on { background: rgba(0,229,160,0.1); color: var(--accent); border: 1px solid rgba(0,229,160,0.2); }
   .ea-status.off { background: rgba(90,100,114,0.15); color: var(--muted); border: 1px solid var(--border); }
-
   .ea-bars { display: flex; flex-direction: column; gap: 6px; }
   .ea-bar-row { display: flex; align-items: center; gap: 8px; }
   .ea-bar-label { font-family: 'Space Mono', monospace; font-size: 9px; color: var(--muted); width: 50px; flex-shrink: 0; }
@@ -212,7 +215,7 @@
   .ea-bar-fill { height: 100%; border-radius: 4px; transition: width 1s cubic-bezier(0.4,0,0.2,1); }
   .ea-bar-val { font-family: 'Space Mono', monospace; font-size: 9px; width: 36px; text-align: right; }
 
-  /* NAV TABS */
+  /* NAV */
   .nav {
     position: sticky; bottom: 0;
     background: rgba(10,12,15,0.95);
@@ -234,11 +237,11 @@
   .nav-btn.active .nav-label { color: var(--accent); }
   .nav-btn:not(.active) .nav-label { color: var(--muted); }
 
-  /* PAGE VISIBILITY */
+  /* PAGES */
   .page { display: none; }
   .page.active { display: block; }
 
-  /* HISTORY PAGE */
+  /* HISTORY */
   .history-table { padding: 0 16px 100px; }
   .h-row {
     display: flex; align-items: center; gap: 10px;
@@ -246,12 +249,6 @@
     padding: 12px 0;
     animation: fadeUp 0.3s ease both;
   }
-  .h-row:nth-child(1) { animation-delay: 0s; }
-  .h-row:nth-child(2) { animation-delay: 0.05s; }
-  .h-row:nth-child(3) { animation-delay: 0.10s; }
-  .h-row:nth-child(4) { animation-delay: 0.15s; }
-  .h-row:nth-child(5) { animation-delay: 0.20s; }
-
   .h-num { font-family: 'Space Mono', monospace; font-size: 9px; color: var(--muted); width: 18px; }
   .h-dir {
     width: 28px; height: 28px; border-radius: 8px;
@@ -267,7 +264,7 @@
   .h-pnl.pos { color: var(--accent); }
   .h-pnl.neg { color: var(--accent2); }
 
-  /* SETTINGS PAGE */
+  /* SETTINGS */
   .settings-page { padding: 0 16px 100px; }
   .set-group { margin-bottom: 20px; }
   .set-group-title {
@@ -281,7 +278,6 @@
     display: flex; justify-content: space-between; align-items: center;
     margin-bottom: 6px;
   }
-  .set-item-left { }
   .set-item-name { font-size: 13px; font-weight: 600; }
   .set-item-desc { font-size: 10px; color: var(--muted); margin-top: 2px; }
   .toggle {
@@ -298,36 +294,59 @@
   }
   .toggle.on::after { transform: translateX(18px); }
   .set-val { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--accent); }
+
+  /* EMPTY STATE */
+  .empty-state {
+    text-align: center; padding: 32px 16px;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace; font-size: 10px;
+    letter-spacing: 0.1em;
+  }
+  .empty-state .icon { font-size: 32px; margin-bottom: 8px; }
+
+  /* FLASH animation for new data */
+  @keyframes flashGreen {
+    0% { background: rgba(0,229,160,0.15); }
+    100% { background: var(--card); }
+  }
+  .flash { animation: flashGreen 0.8s ease; }
 </style>
 </head>
 <body>
-<div class="app">
 
-  <!-- ===== PAGE: HOME ===== -->
+<!-- LOADER -->
+<div id="fb-loader">
+  <div class="loader-dot"></div>
+  <div class="loader-text">CONNEXION FIREBASE...</div>
+</div>
+
+<div class="app" style="display:none" id="main-app">
+
+  <!-- ===== HOME ===== -->
   <div class="page active" id="page-home">
     <header>
       <div class="logo">
         <div class="logo-dot"></div>
         <div>
           <div class="logo-text">EA Dashboard</div>
-          <div class="logo-sub">Algorithmic Trading</div>
+          <div class="logo-sub">drgold-ia · Live</div>
         </div>
       </div>
       <div class="header-right">
         <div class="username" id="tg-username">@user</div>
         <div class="status-badge">
           <div class="status-dot"></div>
-          <span class="status-text">Live</span>
+          <span class="status-text" id="fb-status">Connexion...</span>
         </div>
       </div>
     </header>
 
     <div class="equity-section">
       <div class="equity-label">Equity du compte</div>
-      <div class="equity-value">$<span id="equity-val">4 287</span><span style="font-size:24px;color:var(--muted)">.50</span></div>
+      <div class="equity-value" id="equity-display">$<span id="equity-val">—</span></div>
       <div class="equity-change" id="equity-change-badge">
-        <span class="arrow">↑</span>
-        <span class="pct" id="equity-pct">+3.42%</span>
+        <span class="arrow" id="equity-arrow">↑</span>
+        <span class="pct" id="equity-pct">—</span>
         <span class="period">7j</span>
       </div>
     </div>
@@ -339,41 +358,39 @@
     <div class="stats-grid">
       <div class="stat-card green">
         <div class="stat-icon">📈</div>
-        <div class="stat-val green" id="stat-winrate">73.2%</div>
+        <div class="stat-val green" id="stat-winrate">—</div>
         <div class="stat-lbl">Win Rate</div>
       </div>
       <div class="stat-card red">
         <div class="stat-icon">⚡</div>
-        <div class="stat-val blue" id="stat-trades">142</div>
+        <div class="stat-val blue" id="stat-trades">—</div>
         <div class="stat-lbl">Trades / mois</div>
       </div>
       <div class="stat-card yellow">
         <div class="stat-icon">💰</div>
-        <div class="stat-val yellow" id="stat-profit">+$847</div>
+        <div class="stat-val yellow" id="stat-profit">—</div>
         <div class="stat-lbl">Profit ce mois</div>
       </div>
       <div class="stat-card blue">
         <div class="stat-icon">📉</div>
-        <div class="stat-val red" id="stat-dd">-4.8%</div>
+        <div class="stat-val red" id="stat-dd">—</div>
         <div class="stat-lbl">Drawdown max</div>
       </div>
     </div>
 
     <div class="section-title">Signaux actifs</div>
-
     <div class="signals-list" id="signals-container">
-      <!-- Populated by JS -->
+      <div class="empty-state"><div class="icon">📡</div>En attente de signaux...</div>
     </div>
 
     <div style="height:12px"></div>
     <div class="section-title">Performance EAs</div>
-
     <div class="ea-list" id="ea-container">
-      <!-- Populated by JS -->
+      <div class="empty-state"><div class="icon">🤖</div>En attente des EAs...</div>
     </div>
   </div>
 
-  <!-- ===== PAGE: HISTORY ===== -->
+  <!-- ===== HISTORY ===== -->
   <div class="page" id="page-history">
     <header>
       <div class="logo">
@@ -386,17 +403,17 @@
       <div class="header-right">
         <div class="status-badge" style="background:rgba(255,201,60,0.08);border-color:rgba(255,201,60,0.2)">
           <div class="status-dot" style="background:var(--accent3)"></div>
-          <span class="status-text" style="color:var(--accent3)">30 trades</span>
+          <span class="status-text" style="color:var(--accent3)" id="history-count">0 trades</span>
         </div>
       </div>
     </header>
     <div style="height:16px"></div>
     <div class="history-table" id="history-container">
-      <!-- Populated by JS -->
+      <div class="empty-state"><div class="icon">📋</div>Aucun trade fermé</div>
     </div>
   </div>
 
-  <!-- ===== PAGE: SETTINGS ===== -->
+  <!-- ===== SETTINGS ===== -->
   <div class="page" id="page-settings">
     <header>
       <div class="logo">
@@ -448,46 +465,53 @@
             <div class="set-item-name">Compte actif</div>
             <div class="set-item-desc">Numéro de compte</div>
           </div>
-          <div class="set-val">#12345678</div>
+          <div class="set-val" id="set-account">#—</div>
         </div>
         <div class="set-item">
           <div class="set-item-left">
             <div class="set-item-name">Serveur VPS</div>
-            <div class="set-item-desc">Amsterdam NL</div>
+            <div class="set-item-desc" id="set-vps-loc">—</div>
           </div>
-          <div class="set-val">🟢 Online</div>
+          <div class="set-val" id="set-vps-status">🟡 Attente</div>
         </div>
         <div class="set-item">
           <div class="set-item-left">
             <div class="set-item-name">Lot de base</div>
             <div class="set-item-desc">Taille de position par défaut</div>
           </div>
-          <div class="set-val">0.01</div>
+          <div class="set-val" id="set-lot">0.01</div>
+        </div>
+        <div class="set-item">
+          <div class="set-item-left">
+            <div class="set-item-name">Dernière sync</div>
+            <div class="set-item-desc">Mise à jour depuis MT5</div>
+          </div>
+          <div class="set-val" id="set-lastsync">—</div>
         </div>
       </div>
 
       <div class="set-group">
         <div class="set-group-title">EAs actifs</div>
+        <div id="settings-ea-list">
+          <div class="empty-state" style="padding:16px"><div class="icon">🤖</div>Chargement...</div>
+        </div>
+      </div>
+
+      <div class="set-group">
+        <div class="set-group-title">Firebase</div>
         <div class="set-item">
           <div class="set-item-left">
-            <div class="set-item-name">Barry2</div>
-            <div class="set-item-desc">Compte live principal</div>
+            <div class="set-item-name">Projet</div>
+            <div class="set-item-desc">ID du projet Firebase</div>
           </div>
-          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+          <div class="set-val">drgold-ia</div>
         </div>
         <div class="set-item">
           <div class="set-item-left">
-            <div class="set-item-name">AsiaBoxContinuation</div>
-            <div class="set-item-desc">Asia session box</div>
+            <div class="set-item-name">Base de données</div>
+            <div class="set-item-desc">Firestore en temps réel</div>
           </div>
-          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
-        </div>
-        <div class="set-item">
-          <div class="set-item-left">
-            <div class="set-item-name">Daily_Breakout</div>
-            <div class="set-item-desc">Daily level breakout</div>
-          </div>
-          <div class="toggle" onclick="this.classList.toggle('on')"></div>
+          <div class="set-val" id="fb-conn-status">🔴 Off</div>
         </div>
       </div>
     </div>
@@ -510,132 +534,83 @@
   </nav>
 </div>
 
-<script>
-// ---- Telegram WebApp init ----
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import {
+  getFirestore, collection, doc, onSnapshot,
+  query, orderBy, limit, getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+// ── CONFIG ──────────────────────────────────────────────
+const firebaseConfig = {
+  apiKey: "AIzaSyAzy5vNsSm4XbrLBYFzKPUG50FoIBslV_8",
+  authDomain: "drgold-ia.firebaseapp.com",
+  projectId: "drgold-ia",
+  storageBucket: "drgold-ia.firebasestorage.app",
+  messagingSenderId: "739202146306",
+  appId: "1:739202146306:web:8678e51e40b3ccd508871b",
+  measurementId: "G-73H5FD8NWT"
+};
+
+// ── INIT ────────────────────────────────────────────────
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+// ── TELEGRAM ────────────────────────────────────────────
 const tg = window.Telegram?.WebApp;
 if (tg) {
-  tg.ready();
-  tg.expand();
+  tg.ready(); tg.expand();
   tg.setHeaderColor('#0a0c0f');
   tg.setBackgroundColor('#0a0c0f');
-  const user = tg.initDataUnsafe?.user;
-  if (user) {
-    document.getElementById('tg-username').textContent = '@' + (user.username || user.first_name);
-  }
+  const u = tg.initDataUnsafe?.user;
+  if (u) document.getElementById('tg-username').textContent = '@' + (u.username || u.first_name);
 }
 
-// ---- Sample data (replace with real API calls) ----
-const SIGNALS = [
-  { pair: 'EURUSD', dir: 'buy', ea: 'Barry2', lot: '0.02', pnl: +38.40, time: '09:42' },
-  { pair: 'GBPUSD', dir: 'sell', ea: 'AsiaBox', lot: '0.01', pnl: -12.20, time: '08:15' },
-  { pair: 'XAUUSD', dir: 'buy', ea: 'Barry2', lot: '0.01', pnl: +74.00, time: '07:30' },
-  { pair: 'USDJPY', dir: 'pending', ea: 'Daily_BK', lot: '0.01', pnl: 0, time: '—' },
-];
+// ── SPARKLINE DATA (gardé en mémoire) ───────────────────
+let equityHistory = [];
 
-const EAS = [
-  { name: 'Barry2', active: true, winrate: 76, profit: 62, dd: 18 },
-  { name: 'AsiaBoxContinuation v8', active: true, winrate: 68, profit: 44, dd: 32 },
-  { name: 'Daily_Breakout', active: false, winrate: 54, profit: 28, dd: 55 },
-];
-
-const HISTORY = [
-  { pair: 'EURUSD', dir: 'buy', date: '21/05 09:42', pnl: +38.40 },
-  { pair: 'GBPJPY', dir: 'sell', date: '21/05 07:11', pnl: -21.00 },
-  { pair: 'XAUUSD', dir: 'buy', date: '20/05 14:22', pnl: +112.50 },
-  { pair: 'USDCAD', dir: 'sell', date: '20/05 10:05', pnl: +19.80 },
-  { pair: 'EURUSD', dir: 'sell', date: '19/05 16:47', pnl: -8.60 },
-  { pair: 'GBPUSD', dir: 'buy', date: '19/05 11:30', pnl: +47.20 },
-  { pair: 'NZDUSD', dir: 'buy', date: '18/05 09:00', pnl: +15.00 },
-  { pair: 'XAUUSD', dir: 'sell', date: '17/05 15:20', pnl: -33.40 },
-];
-
-// ---- Render signals ----
-function renderSignals() {
-  const c = document.getElementById('signals-container');
-  c.innerHTML = SIGNALS.map(s => `
-    <div class="signal-card ${s.dir}">
-      <div class="signal-dir ${s.dir}">${s.dir === 'buy' ? 'B' : s.dir === 'sell' ? 'S' : '⏳'}</div>
-      <div class="signal-info">
-        <div class="signal-pair">${s.pair}</div>
-        <div class="signal-meta">${s.ea} · lot ${s.lot}</div>
-      </div>
-      <div class="signal-right">
-        <div class="signal-pnl ${s.pnl > 0 ? 'pos' : s.pnl < 0 ? 'neg' : ''}">${s.pnl > 0 ? '+' : ''}${s.pnl !== 0 ? '$' + s.pnl.toFixed(2) : '—'}</div>
-        <div class="signal-time">${s.time}</div>
-      </div>
-    </div>
-  `).join('');
+// ── HELPERS ─────────────────────────────────────────────
+function fmt(n) {
+  if (n === undefined || n === null) return '—';
+  return Number(n).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+function timeStr(ts) {
+  if (!ts) return '—';
+  const d = ts.toDate ? ts.toDate() : new Date(ts);
+  return d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+}
+function dateStr(ts) {
+  if (!ts) return '—';
+  const d = ts.toDate ? ts.toDate() : new Date(ts);
+  return d.toLocaleDateString('fr-FR', { day:'2-digit', month:'2-digit' }) + ' ' +
+         d.toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' });
 }
 
-// ---- Render EAs ----
-function renderEAs() {
-  const c = document.getElementById('ea-container');
-  c.innerHTML = EAS.map(ea => `
-    <div class="ea-card">
-      <div class="ea-top">
-        <div class="ea-name">${ea.name}</div>
-        <div class="ea-status ${ea.active ? 'on' : 'off'}">${ea.active ? 'Actif' : 'Inactif'}</div>
-      </div>
-      <div class="ea-bars">
-        ${barRow('Win Rate', ea.winrate, '%', '#00e5a0')}
-        ${barRow('Profit', ea.profit, '%', '#ffc93c')}
-        ${barRow('Drawdown', ea.dd, '%', '#ff4d6d')}
-      </div>
-    </div>
-  `).join('');
-  // Animate bars after render
-  setTimeout(() => {
-    document.querySelectorAll('.ea-bar-fill').forEach(b => {
-      b.style.width = b.dataset.w;
-    });
-  }, 100);
-}
-
-function barRow(label, val, unit, color) {
-  return `
-    <div class="ea-bar-row">
-      <div class="ea-bar-label">${label}</div>
-      <div class="ea-bar-track">
-        <div class="ea-bar-fill" data-w="${val}%" style="width:0%;background:${color}"></div>
-      </div>
-      <div class="ea-bar-val" style="color:${color}">${val}${unit}</div>
-    </div>`;
-}
-
-// ---- Render history ----
-function renderHistory() {
-  const c = document.getElementById('history-container');
-  c.innerHTML = HISTORY.map((t, i) => `
-    <div class="h-row" style="animation-delay:${i * 0.05}s">
-      <div class="h-num">${i + 1}</div>
-      <div class="h-dir ${t.dir}">${t.dir === 'buy' ? 'B' : 'S'}</div>
-      <div class="h-info">
-        <div class="h-pair">${t.pair}</div>
-        <div class="h-date">${t.date}</div>
-      </div>
-      <div class="h-pnl ${t.pnl >= 0 ? 'pos' : 'neg'}">${t.pnl >= 0 ? '+' : ''}$${Math.abs(t.pnl).toFixed(2)}</div>
-    </div>
-  `).join('');
-}
-
-// ---- Sparkline chart ----
-function drawSparkline() {
+// ── SPARKLINE ────────────────────────────────────────────
+function drawSparkline(data) {
   const canvas = document.getElementById('sparkline');
   const dpr = window.devicePixelRatio || 1;
-  const W = canvas.parentElement.offsetWidth;
+  const W = canvas.parentElement.offsetWidth || 320;
   const H = 60;
   canvas.width = W * dpr; canvas.height = H * dpr;
   canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
   const ctx = canvas.getContext('2d');
   ctx.scale(dpr, dpr);
-
-  const data = [100, 102, 99, 105, 108, 104, 110, 107, 112, 115, 111, 118, 121, 119, 124];
+  if (!data || data.length < 2) {
+    ctx.fillStyle = 'rgba(0,229,160,0.05)';
+    ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = '#5a6472';
+    ctx.font = '9px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('En attente de données...', W/2, H/2);
+    return;
+  }
   const mn = Math.min(...data), mx = Math.max(...data);
+  const range = mx - mn || 1;
   const pad = 4;
-  const toX = (i) => pad + (i / (data.length - 1)) * (W - pad * 2);
-  const toY = (v) => pad + (1 - (v - mn) / (mx - mn)) * (H - pad * 2);
-
-  // Fill gradient
+  const toX = i => pad + (i / (data.length - 1)) * (W - pad * 2);
+  const toY = v => pad + (1 - (v - mn) / range) * (H - pad * 2);
   const grad = ctx.createLinearGradient(0, 0, 0, H);
   grad.addColorStop(0, 'rgba(0,229,160,0.2)');
   grad.addColorStop(1, 'rgba(0,229,160,0)');
@@ -644,15 +619,10 @@ function drawSparkline() {
   for (let i = 1; i < data.length; i++) ctx.lineTo(toX(i), toY(data[i]));
   ctx.lineTo(toX(data.length - 1), H); ctx.lineTo(toX(0), H);
   ctx.closePath(); ctx.fillStyle = grad; ctx.fill();
-
-  // Line
   ctx.beginPath();
   ctx.moveTo(toX(0), toY(data[0]));
   for (let i = 1; i < data.length; i++) ctx.lineTo(toX(i), toY(data[i]));
-  ctx.strokeStyle = '#00e5a0'; ctx.lineWidth = 2; ctx.lineJoin = 'round';
-  ctx.stroke();
-
-  // Last dot
+  ctx.strokeStyle = '#00e5a0'; ctx.lineWidth = 2; ctx.lineJoin = 'round'; ctx.stroke();
   const lx = toX(data.length - 1), ly = toY(data[data.length - 1]);
   ctx.beginPath(); ctx.arc(lx, ly, 4, 0, Math.PI * 2);
   ctx.fillStyle = '#00e5a0'; ctx.fill();
@@ -660,20 +630,212 @@ function drawSparkline() {
   ctx.fillStyle = 'rgba(0,229,160,0.2)'; ctx.fill();
 }
 
-// ---- Navigation ----
-function showPage(id) {
+// ── UPDATE EQUITY UI ─────────────────────────────────────
+function updateEquity(data) {
+  const eq = data.equity ?? data.balance ?? 0;
+  const bal = data.balance ?? eq;
+  const pct = bal > 0 ? ((eq - bal) / bal * 100) : 0;
+  const parts = fmt(eq).split('.');
+  document.getElementById('equity-val').innerHTML =
+    `${parts[0]}<span style="font-size:24px;color:var(--muted)">.${parts[1] || '00'}</span>`;
+  const badge = document.getElementById('equity-change-badge');
+  const pos = pct >= 0;
+  badge.className = 'equity-change' + (pos ? '' : ' negative');
+  document.getElementById('equity-arrow').textContent = pos ? '↑' : '↓';
+  document.getElementById('equity-pct').textContent = (pos ? '+' : '') + pct.toFixed(2) + '%';
+}
+
+// ── UPDATE STATS UI ──────────────────────────────────────
+function updateStats(data) {
+  if (data.win_rate !== undefined)
+    document.getElementById('stat-winrate').textContent = data.win_rate.toFixed(1) + '%';
+  if (data.trades_month !== undefined)
+    document.getElementById('stat-trades').textContent = data.trades_month;
+  if (data.profit_month !== undefined) {
+    const p = data.profit_month;
+    document.getElementById('stat-profit').textContent = (p >= 0 ? '+$' : '-$') + Math.abs(p).toFixed(0);
+  }
+  if (data.drawdown_max !== undefined)
+    document.getElementById('stat-dd').textContent = '-' + Math.abs(data.drawdown_max).toFixed(1) + '%';
+  if (data.account_number)
+    document.getElementById('set-account').textContent = '#' + data.account_number;
+  if (data.vps_location)
+    document.getElementById('set-vps-loc').textContent = data.vps_location;
+  if (data.lot_size)
+    document.getElementById('set-lot').textContent = data.lot_size;
+  if (data.last_sync) {
+    document.getElementById('set-lastsync').textContent = timeStr(data.last_sync);
+    document.getElementById('set-vps-status').textContent = '🟢 Online';
+  }
+}
+
+// ── RENDER SIGNALS ────────────────────────────────────────
+function renderSignals(docs) {
+  const c = document.getElementById('signals-container');
+  if (!docs.length) {
+    c.innerHTML = '<div class="empty-state"><div class="icon">📡</div>Aucun signal actif</div>';
+    return;
+  }
+  c.innerHTML = docs.map(d => {
+    const s = d.data();
+    const dir = (s.type || s.direction || 'buy').toLowerCase();
+    const pnl = s.pnl ?? s.profit ?? 0;
+    return `<div class="signal-card ${dir} flash">
+      <div class="signal-dir ${dir}">${dir === 'buy' ? 'B' : dir === 'sell' ? 'S' : '⏳'}</div>
+      <div class="signal-info">
+        <div class="signal-pair">${s.symbol || s.pair || '—'}</div>
+        <div class="signal-meta">${s.ea_name || s.ea || '—'} · lot ${s.lot || s.volume || '—'}</div>
+      </div>
+      <div class="signal-right">
+        <div class="signal-pnl ${pnl > 0 ? 'pos' : pnl < 0 ? 'neg' : ''}">
+          ${pnl !== 0 ? (pnl > 0 ? '+' : '') + '$' + Math.abs(pnl).toFixed(2) : '—'}
+        </div>
+        <div class="signal-time">${timeStr(s.open_time || s.timestamp)}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── RENDER EAs ────────────────────────────────────────────
+function barRow(label, val, unit, color) {
+  return `<div class="ea-bar-row">
+    <div class="ea-bar-label">${label}</div>
+    <div class="ea-bar-track">
+      <div class="ea-bar-fill" data-w="${val}%" style="width:0%;background:${color}"></div>
+    </div>
+    <div class="ea-bar-val" style="color:${color}">${val}${unit}</div>
+  </div>`;
+}
+function renderEAs(docs) {
+  const c = document.getElementById('ea-container');
+  const sl = document.getElementById('settings-ea-list');
+  if (!docs.length) {
+    c.innerHTML = '<div class="empty-state"><div class="icon">🤖</div>Aucun EA enregistré</div>';
+    sl.innerHTML = '<div class="empty-state" style="padding:16px"><div class="icon">🤖</div>Aucun EA</div>';
+    return;
+  }
+  c.innerHTML = docs.map(d => {
+    const ea = d.data();
+    return `<div class="ea-card">
+      <div class="ea-top">
+        <div class="ea-name">${ea.name || d.id}</div>
+        <div class="ea-status ${ea.active ? 'on' : 'off'}">${ea.active ? 'Actif' : 'Inactif'}</div>
+      </div>
+      <div class="ea-bars">
+        ${barRow('Win Rate', (ea.win_rate ?? 0).toFixed(0), '%', '#00e5a0')}
+        ${barRow('Profit', (ea.profit_pct ?? 0).toFixed(0), '%', '#ffc93c')}
+        ${barRow('Drawdown', (ea.drawdown ?? 0).toFixed(0), '%', '#ff4d6d')}
+      </div>
+    </div>`;
+  }).join('');
+  sl.innerHTML = docs.map(d => {
+    const ea = d.data();
+    return `<div class="set-item">
+      <div class="set-item-left">
+        <div class="set-item-name">${ea.name || d.id}</div>
+        <div class="set-item-desc">${ea.description || ea.symbol || '—'}</div>
+      </div>
+      <div class="toggle ${ea.active ? 'on' : ''}" onclick="this.classList.toggle('on')"></div>
+    </div>`;
+  }).join('');
+  setTimeout(() => {
+    document.querySelectorAll('.ea-bar-fill').forEach(b => b.style.width = b.dataset.w);
+  }, 100);
+}
+
+// ── RENDER HISTORY ────────────────────────────────────────
+function renderHistory(docs) {
+  const c = document.getElementById('history-container');
+  document.getElementById('history-count').textContent = docs.length + ' trades';
+  if (!docs.length) {
+    c.innerHTML = '<div class="empty-state"><div class="icon">📋</div>Aucun trade fermé</div>';
+    return;
+  }
+  c.innerHTML = docs.map((d, i) => {
+    const t = d.data();
+    const pnl = t.pnl ?? t.profit ?? 0;
+    const dir = (t.type || t.direction || 'buy').toLowerCase();
+    return `<div class="h-row" style="animation-delay:${i * 0.04}s">
+      <div class="h-num">${i + 1}</div>
+      <div class="h-dir ${dir}">${dir === 'buy' ? 'B' : 'S'}</div>
+      <div class="h-info">
+        <div class="h-pair">${t.symbol || t.pair || '—'}</div>
+        <div class="h-date">${dateStr(t.close_time || t.timestamp)}</div>
+      </div>
+      <div class="h-pnl ${pnl >= 0 ? 'pos' : 'neg'}">${pnl >= 0 ? '+' : ''}$${Math.abs(pnl).toFixed(2)}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── NAVIGATION ────────────────────────────────────────────
+window.showPage = function(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('page-' + id).classList.add('active');
   document.getElementById('nav-' + id).classList.add('active');
-  if (id === 'home') setTimeout(drawSparkline, 50);
+  if (id === 'home') setTimeout(() => drawSparkline(equityHistory), 50);
+};
+
+// ── FIRESTORE LISTENERS ───────────────────────────────────
+function startListeners() {
+  document.getElementById('fb-conn-status').textContent = '🟢 Connecté';
+  document.getElementById('fb-status').textContent = 'Live';
+
+  // 1. ACCOUNT STATS — document: ea_dashboard/stats
+  onSnapshot(doc(db, 'ea_dashboard', 'stats'), snap => {
+    if (snap.exists()) {
+      const data = snap.data();
+      updateEquity(data);
+      updateStats(data);
+      // historique equity pour sparkline
+      if (data.equity_history && Array.isArray(data.equity_history)) {
+        equityHistory = data.equity_history;
+        drawSparkline(equityHistory);
+      } else if (data.equity) {
+        equityHistory.push(data.equity);
+        if (equityHistory.length > 50) equityHistory.shift();
+        drawSparkline(equityHistory);
+      }
+    }
+  }, err => {
+    console.warn('Stats listener:', err.message);
+    document.getElementById('fb-status').textContent = 'Erreur';
+    document.getElementById('fb-conn-status').textContent = '🔴 Erreur';
+  });
+
+  // 2. OPEN TRADES — collection: ea_dashboard/trades/open
+  const openQ = query(
+    collection(db, 'ea_dashboard', 'trades', 'open'),
+    orderBy('open_time', 'desc'),
+    limit(20)
+  );
+  onSnapshot(openQ, snap => {
+    renderSignals(snap.docs);
+  }, err => console.warn('Open trades:', err.message));
+
+  // 3. CLOSED TRADES — collection: ea_dashboard/trades/history
+  const histQ = query(
+    collection(db, 'ea_dashboard', 'trades', 'history'),
+    orderBy('close_time', 'desc'),
+    limit(50)
+  );
+  onSnapshot(histQ, snap => {
+    renderHistory(snap.docs);
+  }, err => console.warn('History:', err.message));
+
+  // 4. EAs — collection: ea_dashboard/eas
+  onSnapshot(collection(db, 'ea_dashboard', 'eas'), snap => {
+    renderEAs(snap.docs);
+  }, err => console.warn('EAs:', err.message));
 }
 
-// ---- Init ----
-renderSignals();
-renderEAs();
-renderHistory();
-setTimeout(drawSparkline, 100);
+// ── BOOT ──────────────────────────────────────────────────
+setTimeout(() => {
+  document.getElementById('fb-loader').style.display = 'none';
+  document.getElementById('main-app').style.display = 'block';
+  drawSparkline([]);
+  startListeners();
+}, 1200);
 </script>
 </body>
 </html>
